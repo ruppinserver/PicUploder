@@ -1,0 +1,118 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <title>File Transfer Example</title>
+       	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.css" />
+       	
+	<script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
+	<script src="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.js"></script>
+     <script type="text/javascript" charset="utf-8" src="cordova-2.1.0.js"></script>
+    
+    <script src="phonegap.js" type="text/javascript"></script>
+    <script type="text/javascript" charset="utf-8">
+
+        // Wait for Cordova to load
+        //
+        document.addEventListener("deviceready", onDeviceReady, false);
+
+        // Cordova is ready
+        //
+        function onDeviceReady() {
+            // Retrieve image file location from specified source
+            }
+            
+            function workManager(){
+            	if (document.getElementById("txt").value != "")
+            	{
+            		getPicture();
+            	}
+            	else
+            	{
+            		alert("Please Insert A Name For Your Picture!");
+            	}
+            }
+            
+            
+            function getPicture(){
+            navigator.camera.getPicture(uploadPhoto,
+                                        function(message) { alert('get picture failed'); },
+                                        { quality: 50, 
+                                        destinationType: navigator.camera.DestinationType.FILE_URI,
+                                        sourceType: navigator.camera.PictureSourceType.CAMERA }
+                                        );
+
+        }
+
+        function uploadPhoto(imageURI) {
+        	Load();
+            var options = new FileUploadOptions();
+            options.fileKey="file";
+            options.fileName=document.getElementById("txt").value;
+            options.mimeType="image/jpeg";
+            var params = {};
+            params.value1 = "test";
+            params.value2 = "param";
+
+            options.params = params;
+
+            var ft = new FileTransfer();
+            ft.upload(imageURI, encodeURI("http://82.166.189.70/mobile/CU2/ReturnValue.ashx"), win, fail, options);
+        }
+
+        function win(r) {
+        path = r.response;
+        img = document.getElementById("mainImage");
+        img.src= "http://82.166.189.70/mobile/CU2/" + document.getElementById("txt").value+".jpg";
+            console.log("Code = " + r.responseCode);
+            console.log("Response = " + r.response);
+            console.log("Sent = " + r.bytesSent);
+        UnLoad();
+        }
+
+        function fail(error) {
+            alert("An error has occurred: Code = " + error.code);
+            console.log("upload error source " + error.source);
+            console.log("upload error target " + error.target);
+        }
+
+function Load() {
+	        $.mobile.loading('show', {
+	            text: "loading the image",
+	            theme: 'c',
+                textVisible : true
+	        });} // loading
+
+function UnLoad() {
+		    $.mobile.loading('hide');
+		} // Unload
+
+        </script>
+</head>
+<body>   
+        <div data-role="page" data-theme="a">
+        <div data-role="header">
+            <h1>Picture Upload</h1>
+        </div>
+        <!-- /header -->
+        <div data-role="content">
+            <p>
+                Write Your Name
+            </p>
+        	<div data-role="controlgroup">
+            	<input type="text" id="txt"/>
+            	<br>
+            	<a href="#" id="getPic" data-role="button" onclick="workManager()">Take Picture!</a>
+            </div>
+        </div>
+        <div data-role="controlgroup" data-type="horizontal" style="padding-left: 50px">
+    		<img id = "mainImage" width="200" height="150"/>
+        </div>
+    </div>
+    <!-- /content -->
+    </div>
+    <!-- /page -->
+    
+    
+    
+</body>
+</html>
